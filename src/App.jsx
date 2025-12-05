@@ -77,7 +77,7 @@ export default function App() {
                     <div className="text-4xl">💨</div>
                     <div>
                         <h1 className="text-2xl font-bold text-gray-800">ProutGPT</h1>
-                        <p className="text-sm text-gray-600">Le chat bot le plus drôle du monde!</p>
+                        <p className="text-sm text-gray-600">Le chat bot le plus con du monde!</p>
                     </div>
                 </div>
                 <div className="text-xs text-gray-500 flex gap-2 items-center">
@@ -153,9 +153,12 @@ export default function App() {
                     </button>
                 </div>
                 <p className="text-center text-xs text-gray-600 mt-2">
-                    Propulsé par Llama 3.2 🚀 | Hébergé sur Oracle Cloud ☁️
+                    Vibe codé par Benoît Coulombe, Gaëlle Coulombe et Simon Coulombe | Propulsé par Llama 3.2 🚀 | Hébergé sur une VM gratuite de Oracle Cloud ☁️
                 </p>
             </div>
+            <footer className="app-footer">
+                vibe coded by Benoît, Gaëlle and Simon Coulombe
+            </footer>
         </div>
     );
 }
