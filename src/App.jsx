@@ -156,9 +156,6 @@ export default function App() {
                     Vibe codé par Benoît Coulombe, Gaëlle Coulombe et Simon Coulombe | Propulsé par Llama 3.2 🚀 | Hébergé sur une VM gratuite de Oracle Cloud ☁️
                 </p>
             </div>
-            <footer className="app-footer">
-                vibe coded by Benoît, Gaëlle and Simon Coulombe
-            </footer>
         </div>
     );
 }
