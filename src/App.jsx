@@ -153,7 +153,7 @@ export default function App() {
                     </button>
                 </div>
                 <p className="text-center text-xs text-gray-600 mt-2">
-                    Vibe codé par Benoît Coulombe, Gaëlle Coulombe et Simon Coulombe | Propulsé par Llama 3.2 🚀 | Hébergé sur une VM gratuite de Oracle Cloud ☁️
+                    Vibe codé par Benoît Coulombe, Gaëlle Coulombe et Simon Coulombe | Propulsé par Ministral 3 3b 🚀 | Hébergé sur une VM gratuite de Oracle Cloud ☁️
                 </p>
             </div>
         </div>
