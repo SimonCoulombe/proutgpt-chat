@@ -13,6 +13,7 @@ export default function App() {
     const messagesEndRef = useRef(null);
     const [apiUrl, setApiUrl] = useState('https://api.proutgpt.com');
     const [modelName, setModelName] = useState('proutgpt:latest');
+    const [visitorCount, setVisitorCount] = useState(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -21,6 +22,14 @@ export default function App() {
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
+    // Visitor counter - runs once when component mounts
+    useEffect(() => {
+        fetch('https://api.countapi.xyz/hit/proutgpt.com/visits')
+            .then(res => res.json())
+            .then(data => setVisitorCount(data.value))
+            .catch(err => console.error('Counter error:', err));
+    }, []);
 
     const sendMessage = async () => {
         if (!input.trim() || isLoading) return;
@@ -152,9 +161,18 @@ export default function App() {
                         <Send className="w-6 h-6" />
                     </button>
                 </div>
-                <p className="text-center text-xs text-gray-600 mt-2">
-                    Vibe codé par Benoît Coulombe, Gaëlle Coulombe et Simon Coulombe | Propulsé par Ministral 3 3b 🚀 | Hébergé sur une VM gratuite de Oracle Cloud ☁️
-                </p>
+                <div className="text-center text-xs text-gray-600 mt-2">
+                    <p>
+                        Vibe codé par Benoît Coulombe, Gaëlle Coulombe et Simon Coulombe |
+                        Propulsé par Ministral 3 3b 🚀 |
+                        Hébergé sur une VM gratuite de Oracle Cloud ☁️
+                    </p>
+                    {visitorCount && (
+                        <p className="mt-1">
+                            👀 Visiteurs depuis le 8 décembre 2025: {visitorCount.toLocaleString()} 💨
+                        </p>
+                    )}
+                </div>
             </div>
         </div>
     );
