@@ -11,6 +11,7 @@ export default function App() {
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef(null);
+    const [backend, setBackend] = useState('ollama'); // 'ollama' or 'openrouter'
     const [apiUrl, setApiUrl] = useState('https://api.proutgpt.com');
     const [modelName, setModelName] = useState('proutgpt:latest');
     const [visitorCount, setVisitorCount] = useState(null);
@@ -23,7 +24,7 @@ export default function App() {
         scrollToBottom();
     }, [messages]);
 
-    // Visitor counter - runs once when component mounts
+    // Visitor counter
     useEffect(() => {
         fetch('https://api.countapi.xyz/hit/proutgpt.com/visits')
             .then(res => res.json())
@@ -40,16 +41,30 @@ export default function App() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${apiUrl}/api/generate`, {
+            let endpoint, body;
+
+            if (backend === 'openrouter') {
+                endpoint = 'https://api.proutgpt.com/api/openrouter';
+                body = JSON.stringify({
+                    prompt: userMessage,
+                    model: 'meta-llama/llama-3.2-3b-instruct:free'
+                });
+            } else {
+                // Ollama (default)
+                endpoint = `${apiUrl}/api/generate`;
+                body = JSON.stringify({
+                    model: modelName,
+                    prompt: userMessage,
+                    stream: false
+                });
+            }
+
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    model: modelName,
-                    prompt: userMessage,
-                    stream: false
-                })
+                body: body
             });
 
             if (!response.ok) {
@@ -89,21 +104,38 @@ export default function App() {
                         <p className="text-sm text-gray-600">Le chat bot le plus con du monde!</p>
                     </div>
                 </div>
-                <div className="text-xs text-gray-500 flex gap-2 items-center">
-                    <input
-                        type="text"
-                        value={apiUrl}
-                        onChange={(e) => setApiUrl(e.target.value)}
-                        className="border rounded px-2 py-1 w-48 text-xs"
-                        placeholder="API URL"
-                    />
-                    <input
-                        type="text"
-                        value={modelName}
-                        onChange={(e) => setModelName(e.target.value)}
-                        className="border rounded px-2 py-1 w-32 text-xs"
-                        placeholder="Model"
-                    />
+                <div className="text-xs text-gray-500 flex gap-2 items-center flex-wrap">
+                    <select
+                        value={backend}
+                        onChange={(e) => setBackend(e.target.value)}
+                        className="border rounded px-2 py-1 text-xs"
+                    >
+                        <option value="ollama">🏠 Ollama (Local)</option>
+                        <option value="openrouter">☁️ OpenRouter (Cloud)</option>
+                    </select>
+                    {backend === 'ollama' && (
+                        <>
+                            <input
+                                type="text"
+                                value={apiUrl}
+                                onChange={(e) => setApiUrl(e.target.value)}
+                                className="border rounded px-2 py-1 w-48 text-xs"
+                                placeholder="API URL"
+                            />
+                            <input
+                                type="text"
+                                value={modelName}
+                                onChange={(e) => setModelName(e.target.value)}
+                                className="border rounded px-2 py-1 w-32 text-xs"
+                                placeholder="Model"
+                            />
+                        </>
+                    )}
+                    {backend === 'openrouter' && (
+                        <span className="text-xs text-green-600 font-semibold">
+                            💰 Free Credits
+                        </span>
+                    )}
                 </div>
             </div>
 
@@ -134,7 +166,9 @@ export default function App() {
                         <div className="bg-white text-gray-800 rounded-2xl rounded-bl-none shadow-md px-4 py-3">
                             <div className="flex items-center gap-2">
                                 <Loader2 className="w-4 h-4 animate-spin" />
-                                <span className="text-sm">ProutGPT réfléchit...</span>
+                                <span className="text-sm">
+                                    ProutGPT réfléchit... {backend === 'openrouter' ? '☁️' : '🏠'}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -164,12 +198,12 @@ export default function App() {
                 <div className="text-center text-xs text-gray-600 mt-2">
                     <p>
                         Vibe codé par Benoît Coulombe, Gaëlle Coulombe et Simon Coulombe |
-                        Propulsé par Ministral 3 3b 🚀 |
+                        {backend === 'ollama' ? ' Propulsé par Ministral 3 3b 🚀' : ' Propulsé par OpenRouter ☁️'} |
                         Hébergé sur une VM gratuite de Oracle Cloud ☁️
                     </p>
                     {visitorCount && (
                         <p className="mt-1">
-                            👀 Visiteurs depuis le 8 décembre 2025: {visitorCount.toLocaleString()} 💨
+                            👀 Visiteurs: {visitorCount.toLocaleString()} 💨
                         </p>
                     )}
                 </div>
