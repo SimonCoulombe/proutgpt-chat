@@ -17,6 +17,7 @@ export default function App() {
     const [ollamaModels, setOllamaModels] = useState([]);
     const [openrouterModels] = useState([
         'mistralai/devstral-2512:free',
+        'tngtech/deepseek-r1t2-chimera:free',
         'z-ai/glm-4.5-air:free',
         'qwen/qwen3-coder:free',
         'openai/gpt-oss-20b:free',
