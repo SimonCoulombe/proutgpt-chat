@@ -14,7 +14,6 @@ export default function App() {
     const [backend, setBackend] = useState('openrouter'); // 'openrouter' or 'ollama'
     const [apiUrl, setApiUrl] = useState('https://api.proutgpt.com');
     const [modelName, setModelName] = useState('mistralai/devstral-2512:free');
-    const [visitorCount, setVisitorCount] = useState(null);
     const [ollamaModels, setOllamaModels] = useState([]);
     const [openrouterModels] = useState([
         'mistralai/devstral-2512:free',
@@ -33,13 +32,6 @@ export default function App() {
         scrollToBottom();
     }, [messages]);
 
-    // Visitor counter
-    useEffect(() => {
-        fetch('https://api.countapi.xyz/hit/proutgpt.com/visits')
-            .then(res => res.json())
-            .then(data => setVisitorCount(data.value))
-            .catch(err => console.error('Counter error:', err));
-    }, []);
 
     // Fetch Ollama models when backend is set to ollama
     useEffect(() => {
@@ -178,9 +170,6 @@ export default function App() {
                                     <option key={index} value={model}>{model}</option>
                                 ))}
                             </select>
-                            <span className="text-xs text-green-600 font-semibold">
-                                💰 Free Credits
-                            </span>
                         </>
                     )}
                 </div>
@@ -246,13 +235,8 @@ export default function App() {
                     <p>
                         Vibe codé par Benoît Coulombe, Gaëlle Coulombe et Simon Coulombe |
                         {backend === 'ollama' ? ` Propulsé par ${modelName} 🚀` : ` Propulsé par ${modelName} ☁️`} |
-                        Hébergé sur une VM gratuite de Oracle Cloud ☁️
+                        Ollama et proxy vers openrouter hébergé sur une VM gratuite de Oracle Cloud ☁️
                     </p>
-                    {visitorCount && (
-                        <p className="mt-1">
-                            👀 Visiteurs: {visitorCount.toLocaleString()} 💨
-                        </p>
-                    )}
                 </div>
             </div>
         </div>
