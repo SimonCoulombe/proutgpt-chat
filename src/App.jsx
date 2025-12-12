@@ -11,10 +11,19 @@ export default function App() {
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef(null);
-    const [backend, setBackend] = useState('ollama'); // 'ollama' or 'openrouter'
+    const [backend, setBackend] = useState('openrouter'); // 'openrouter' or 'ollama'
     const [apiUrl, setApiUrl] = useState('https://api.proutgpt.com');
-    const [modelName, setModelName] = useState('proutgpt:latest');
+    const [modelName, setModelName] = useState('mistralai/devstral-2512:free');
     const [visitorCount, setVisitorCount] = useState(null);
+    const [ollamaModels, setOllamaModels] = useState([]);
+    const [openrouterModels] = useState([
+        'mistralai/devstral-2512:free',
+        'z-ai/glm-4.5-air:free',
+        'qwen/qwen3-coder:free',
+        'openai/gpt-oss-20b:free',
+        'google/gemma-3-27b-it:free',
+        'meta-llama/llama-3.3-70b-instruct:free'
+    ]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -32,6 +41,27 @@ export default function App() {
             .catch(err => console.error('Counter error:', err));
     }, []);
 
+    // Fetch Ollama models when backend is set to ollama
+    useEffect(() => {
+        if (backend === 'ollama') {
+            fetchOllamaModels();
+        }
+    }, [backend]);
+
+    const fetchOllamaModels = async () => {
+        try {
+            const response = await fetch(`${apiUrl}/api/tags`);
+            if (response.ok) {
+                const data = await response.json();
+                setOllamaModels(data.models || []);
+            } else {
+                console.error('Failed to fetch Ollama models');
+            }
+        } catch (error) {
+            console.error('Error fetching Ollama models:', error);
+        }
+    };
+
     const sendMessage = async () => {
         if (!input.trim() || isLoading) return;
 
@@ -47,7 +77,7 @@ export default function App() {
                 endpoint = 'https://api.proutgpt.com/api/openrouter';
                 body = JSON.stringify({
                     prompt: userMessage,
-                    model: 'meta-llama/llama-3.2-3b-instruct:free'
+                    model: modelName
                 });
             } else {
                 // Ollama (default)
@@ -110,8 +140,8 @@ export default function App() {
                         onChange={(e) => setBackend(e.target.value)}
                         className="border rounded px-2 py-1 text-xs"
                     >
-                        <option value="ollama">🏠 Ollama (Local)</option>
                         <option value="openrouter">☁️ OpenRouter (Cloud)</option>
+                        <option value="ollama">🏠 Ollama (Local)</option>
                     </select>
                     {backend === 'ollama' && (
                         <>
@@ -122,19 +152,36 @@ export default function App() {
                                 className="border rounded px-2 py-1 w-48 text-xs"
                                 placeholder="API URL"
                             />
-                            <input
-                                type="text"
+                            <select
                                 value={modelName}
                                 onChange={(e) => setModelName(e.target.value)}
-                                className="border rounded px-2 py-1 w-32 text-xs"
-                                placeholder="Model"
-                            />
+                                className="border rounded px-2 py-1 text-xs"
+                            >
+                                {ollamaModels.length > 0 ? (
+                                    ollamaModels.map((model, index) => (
+                                        <option key={index} value={model.name}>{model.name}</option>
+                                    ))
+                                ) : (
+                                    <option value="">Loading models...</option>
+                                )}
+                            </select>
                         </>
                     )}
                     {backend === 'openrouter' && (
-                        <span className="text-xs text-green-600 font-semibold">
-                            💰 Free Credits
-                        </span>
+                        <>
+                            <select
+                                value={modelName}
+                                onChange={(e) => setModelName(e.target.value)}
+                                className="border rounded px-2 py-1 text-xs"
+                            >
+                                {openrouterModels.map((model, index) => (
+                                    <option key={index} value={model}>{model}</option>
+                                ))}
+                            </select>
+                            <span className="text-xs text-green-600 font-semibold">
+                                💰 Free Credits
+                            </span>
+                        </>
                     )}
                 </div>
             </div>
@@ -198,7 +245,7 @@ export default function App() {
                 <div className="text-center text-xs text-gray-600 mt-2">
                     <p>
                         Vibe codé par Benoît Coulombe, Gaëlle Coulombe et Simon Coulombe |
-                        {backend === 'ollama' ? ' Propulsé par Ministral 3 3b 🚀' : ' Propulsé par OpenRouter ☁️'} |
+                        {backend === 'ollama' ? ` Propulsé par ${modelName} 🚀` : ` Propulsé par ${modelName} ☁️`} |
                         Hébergé sur une VM gratuite de Oracle Cloud ☁️
                     </p>
                     {visitorCount && (
