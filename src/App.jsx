@@ -21,6 +21,7 @@ export default function App() {
 
     const [openrouterModels] = useState([
         'mistralai/devstral-2512:free',
+        'meta-llama/llama-3.2-3b-instruct:free',
         'tngtech/deepseek-r1t2-chimera:free',
         'z-ai/glm-4.5-air:free',
         'qwen/qwen3-coder:free',
@@ -207,8 +208,8 @@ export default function App() {
                     >
                         <div
                             className={`max-w-[80%] rounded-2xl px-4 py-3 ${message.role === 'user'
-                                    ? 'bg-blue-500 text-white rounded-br-none'
-                                    : 'bg-white text-gray-800 rounded-bl-none shadow-md'
+                                ? 'bg-blue-500 text-white rounded-br-none'
+                                : 'bg-white text-gray-800 rounded-bl-none shadow-md'
                                 }`}
                         >
                             {message.role === 'assistant' && (
