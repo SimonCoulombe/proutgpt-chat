@@ -8,13 +8,17 @@ export default function App() {
             content: '🎉 Salut! Je suis ProutGPT! Prêt pour des blagues de pets trop cool? Haha! 💨'
         }
     ]);
+
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef(null);
+
     const [backend, setBackend] = useState('openrouter'); // 'openrouter' or 'ollama'
     const [apiUrl, setApiUrl] = useState('https://api.proutgpt.com');
+
     const [modelName, setModelName] = useState('mistralai/devstral-2512:free');
     const [ollamaModels, setOllamaModels] = useState([]);
+
     const [openrouterModels] = useState([
         'mistralai/devstral-2512:free',
         'tngtech/deepseek-r1t2-chimera:free',
@@ -25,16 +29,15 @@ export default function App() {
         'meta-llama/llama-3.3-70b-instruct:free'
     ]);
 
+    // Auto scroll
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
-
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
 
-
-    // Fetch Ollama models when backend is set to ollama
+    // Fetch Ollama models when backend switches
     useEffect(() => {
         if (backend === 'ollama') {
             fetchOllamaModels();
@@ -55,6 +58,15 @@ export default function App() {
         }
     };
 
+    // FIX: Reset modelName when backend changes OR when ollamaModels arrive
+    useEffect(() => {
+        if (backend === 'openrouter') {
+            setModelName(openrouterModels[0]);
+        } else if (backend === 'ollama' && ollamaModels.length > 0) {
+            setModelName(ollamaModels[0].name);
+        }
+    }, [backend, ollamaModels]);
+
     const sendMessage = async () => {
         if (!input.trim() || isLoading) return;
 
@@ -73,7 +85,6 @@ export default function App() {
                     model: modelName
                 });
             } else {
-                // Ollama (default)
                 endpoint = `${apiUrl}/api/generate`;
                 body = JSON.stringify({
                     model: modelName,
@@ -84,9 +95,7 @@ export default function App() {
 
             const response = await fetch(endpoint, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: body
             });
 
@@ -95,16 +104,17 @@ export default function App() {
             }
 
             const data = await response.json();
-            setMessages(prev => [...prev, {
-                role: 'assistant',
-                content: data.response
-            }]);
+            setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+
         } catch (error) {
             console.error('Error:', error);
-            setMessages(prev => [...prev, {
-                role: 'assistant',
-                content: '😅 Oups! J\'ai eu un problème (comme un prout qui rate!). Réessaie!'
-            }]);
+            setMessages(prev => [
+                ...prev,
+                {
+                    role: 'assistant',
+                    content: "😅 Oups! J'ai eu un problème (comme un prout qui rate!). Réessaie!"
+                }
+            ]);
         } finally {
             setIsLoading(false);
         }
@@ -119,6 +129,8 @@ export default function App() {
 
     return (
         <div className="flex flex-col h-screen bg-gradient-to-br from-green-400 via-blue-400 to-purple-500">
+
+            {/* Header */}
             <div className="bg-white shadow-lg p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div className="text-4xl">💨</div>
@@ -127,7 +139,10 @@ export default function App() {
                         <p className="text-sm text-gray-600">Le chat bot le plus con du monde!</p>
                     </div>
                 </div>
+
                 <div className="text-xs text-gray-500 flex gap-2 items-center flex-wrap">
+
+                    {/* Backend selector */}
                     <select
                         value={backend}
                         onChange={(e) => setBackend(e.target.value)}
@@ -136,6 +151,8 @@ export default function App() {
                         <option value="openrouter">☁️ OpenRouter (Cloud)</option>
                         <option value="ollama">🏠 Ollama (Local)</option>
                     </select>
+
+                    {/* Ollama settings */}
                     {backend === 'ollama' && (
                         <>
                             <input
@@ -145,6 +162,7 @@ export default function App() {
                                 className="border rounded px-2 py-1 w-48 text-xs"
                                 placeholder="API URL"
                             />
+
                             <select
                                 value={modelName}
                                 onChange={(e) => setModelName(e.target.value)}
@@ -152,7 +170,9 @@ export default function App() {
                             >
                                 {ollamaModels.length > 0 ? (
                                     ollamaModels.map((model, index) => (
-                                        <option key={index} value={model.name}>{model.name}</option>
+                                        <option key={index} value={model.name}>
+                                            {model.name}
+                                        </option>
                                     ))
                                 ) : (
                                     <option value="">Loading models...</option>
@@ -160,22 +180,25 @@ export default function App() {
                             </select>
                         </>
                     )}
+
+                    {/* OpenRouter settings */}
                     {backend === 'openrouter' && (
-                        <>
-                            <select
-                                value={modelName}
-                                onChange={(e) => setModelName(e.target.value)}
-                                className="border rounded px-2 py-1 text-xs"
-                            >
-                                {openrouterModels.map((model, index) => (
-                                    <option key={index} value={model}>{model}</option>
-                                ))}
-                            </select>
-                        </>
+                        <select
+                            value={modelName}
+                            onChange={(e) => setModelName(e.target.value)}
+                            className="border rounded px-2 py-1 text-xs"
+                        >
+                            {openrouterModels.map((model, index) => (
+                                <option key={index} value={model}>
+                                    {model}
+                                </option>
+                            ))}
+                        </select>
                     )}
                 </div>
             </div>
 
+            {/* Message list */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.map((message, index) => (
                     <div
@@ -184,8 +207,8 @@ export default function App() {
                     >
                         <div
                             className={`max-w-[80%] rounded-2xl px-4 py-3 ${message.role === 'user'
-                                ? 'bg-blue-500 text-white rounded-br-none'
-                                : 'bg-white text-gray-800 rounded-bl-none shadow-md'
+                                    ? 'bg-blue-500 text-white rounded-br-none'
+                                    : 'bg-white text-gray-800 rounded-bl-none shadow-md'
                                 }`}
                         >
                             {message.role === 'assistant' && (
@@ -194,10 +217,12 @@ export default function App() {
                                     <span className="font-bold text-sm">ProutGPT</span>
                                 </div>
                             )}
+
                             <p className="whitespace-pre-wrap">{message.content}</p>
                         </div>
                     </div>
                 ))}
+
                 {isLoading && (
                     <div className="flex justify-start">
                         <div className="bg-white text-gray-800 rounded-2xl rounded-bl-none shadow-md px-4 py-3">
@@ -210,9 +235,11 @@ export default function App() {
                         </div>
                     </div>
                 )}
+
                 <div ref={messagesEndRef} />
             </div>
 
+            {/* Input */}
             <div className="bg-white border-t p-4">
                 <div className="flex gap-2 max-w-4xl mx-auto">
                     <input
@@ -224,6 +251,7 @@ export default function App() {
                         className="flex-1 border-2 border-gray-300 rounded-full px-6 py-3 focus:outline-none focus:border-blue-500 text-gray-800"
                         disabled={isLoading}
                     />
+
                     <button
                         onClick={sendMessage}
                         disabled={isLoading || !input.trim()}
@@ -232,11 +260,14 @@ export default function App() {
                         <Send className="w-6 h-6" />
                     </button>
                 </div>
+
                 <div className="text-center text-xs text-gray-600 mt-2">
                     <p>
-                        Vibe codé par Benoît Coulombe, Gaëlle Coulombe et Simon Coulombe |
-                        {backend === 'ollama' ? ` Propulsé par ${modelName} 🚀` : ` Propulsé par ${modelName} ☁️`} |
-                        Ollama et proxy vers openrouter hébergé sur une VM gratuite de Oracle Cloud ☁️
+                        Vibe codé par Benoît Coulombe, Gaëlle Coulombe et Simon Coulombe |{' '}
+                        {backend === 'ollama'
+                            ? `Propulsé par ${modelName} 🚀`
+                            : `Propulsé par ${modelName} ☁️`}{' '}
+                        | Ollama et proxy vers openrouter hébergé sur une VM gratuite de Oracle Cloud ☁️
                     </p>
                 </div>
             </div>
