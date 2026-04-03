@@ -379,7 +379,7 @@ export default function App() {
                     <div className="text-4xl select-none">💨</div>
                     <div>
                         <h1 className="text-2xl font-bold text-gray-800 leading-tight">ProutGPT</h1>
-                        <p className="text-sm text-gray-500">Le chat bot le plus con du monde!</p>
+                        <p className="text-sm text-gray-500">Le seul chatbot que ton boss ne bloque pas!</p>
                     </div>
                 </div>
 
@@ -467,11 +467,10 @@ export default function App() {
                         className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                         <div
-                            className={`relative group max-w-[80%] rounded-2xl px-4 py-3 ${
-                                message.role === 'user'
+                            className={`relative group max-w-[80%] rounded-2xl px-4 py-3 ${message.role === 'user'
                                     ? 'bg-blue-500 text-white rounded-br-none'
                                     : 'bg-white text-gray-800 rounded-bl-none shadow-md'
-                            }`}
+                                }`}
                         >
                             {message.role === 'assistant' && (
                                 <div className="flex items-center gap-2 mb-1">
