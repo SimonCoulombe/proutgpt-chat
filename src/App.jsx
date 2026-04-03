@@ -16,18 +16,17 @@ export default function App() {
     const [backend, setBackend] = useState('openrouter'); // 'openrouter' or 'ollama'
     const [apiUrl, setApiUrl] = useState('https://api.proutgpt.com');
 
-    const [modelName, setModelName] = useState('mistralai/devstral-2512:free');
+    const [modelName, setModelName] = useState('z-ai/glm-4.5-air:free');
     const [ollamaModels, setOllamaModels] = useState([]);
 
     const [openrouterModels] = useState([
-        'mistralai/devstral-2512:free',
-        'meta-llama/llama-3.2-3b-instruct:free',
-        'tngtech/deepseek-r1t2-chimera:free',
         'z-ai/glm-4.5-air:free',
-        'qwen/qwen3-coder:free',
-        'openai/gpt-oss-20b:free',
-        'google/gemma-3-27b-it:free',
-        'meta-llama/llama-3.3-70b-instruct:free'
+        'nvidia/nemotron-3-super-120b-a12b:free',
+        'stepfun/step-3.5-flash:free',
+        'nvidia/nemotron-nano-12b-v2-vl:free',
+        'nvidia/nemotron-nano-9b-v2:free',
+        'liquid/lfm-2.5-1.2b-instruct:free',
+        'arcee-ai/trinity-mini:free',
     ]);
 
     // Auto scroll
