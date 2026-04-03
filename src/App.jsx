@@ -72,6 +72,15 @@ export default function App() {
 
         const userMessage = input.trim();
         setInput('');
+
+        // Build updated history including the new user message
+        // Skip the initial hardcoded greeting (index 0) — it's a UI-only message, not a real AI turn
+        const historyWithoutGreeting = messages.slice(1);
+        const updatedHistory = [...historyWithoutGreeting, { role: 'user', content: userMessage }];
+
+        // Count how many user messages have been sent (including this one)
+        const userMessageCount = updatedHistory.filter(m => m.role === 'user').length;
+
         setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
         setIsLoading(true);
 
@@ -81,14 +90,16 @@ export default function App() {
             if (backend === 'openrouter') {
                 endpoint = 'https://api.proutgpt.com/api/openrouter';
                 body = JSON.stringify({
-                    prompt: userMessage,
-                    model: modelName
+                    messages: updatedHistory,
+                    model: modelName,
+                    userMessageCount: userMessageCount
                 });
             } else {
                 endpoint = `${apiUrl}/api/generate`;
                 body = JSON.stringify({
                     model: modelName,
-                    prompt: userMessage,
+                    messages: updatedHistory,
+                    userMessageCount: userMessageCount,
                     stream: false
                 });
             }
