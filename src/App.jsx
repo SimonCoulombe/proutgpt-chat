@@ -16,13 +16,13 @@ export default function App() {
     const [backend, setBackend] = useState('openrouter'); // 'openrouter' or 'ollama'
     const [apiUrl, setApiUrl] = useState('https://api.proutgpt.com');
 
-     const [modelName, setModelName] = useState('nvidia/nemotron-3-super-120b-a12b:free');
+    const [modelName, setModelName] = useState('nvidia/nemotron-3-super-120b-a12b:free');
     const [ollamaModels, setOllamaModels] = useState([]);
 
     const [openrouterModels] = useState([
+        'stepfun/step-3.5-flash:free',
         'z-ai/glm-4.5-air:free',
         'nvidia/nemotron-3-super-120b-a12b:free',
-        'stepfun/step-3.5-flash:free',
         'nvidia/nemotron-nano-12b-v2-vl:free',
         'nvidia/nemotron-nano-9b-v2:free',
         'liquid/lfm-2.5-1.2b-instruct:free',
