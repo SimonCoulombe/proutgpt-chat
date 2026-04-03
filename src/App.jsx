@@ -16,7 +16,7 @@ export default function App() {
     const [backend, setBackend] = useState('openrouter'); // 'openrouter' or 'ollama'
     const [apiUrl, setApiUrl] = useState('https://api.proutgpt.com');
 
-    const [modelName, setModelName] = useState('z-ai/glm-4.5-air:free');
+     const [modelName, setModelName] = useState('nvidia/nemotron-3-super-120b-a12b:free');
     const [ollamaModels, setOllamaModels] = useState([]);
 
     const [openrouterModels] = useState([
