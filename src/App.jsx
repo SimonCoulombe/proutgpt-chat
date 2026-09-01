@@ -8,15 +8,7 @@ import remarkGfm from 'remark-gfm';
 // ---------------------------------------------------------------------------
 const OPENROUTER_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.proutgpt.com';
 
-const OPENROUTER_MODELS = [
-    'stepfun/step-3.5-flash:free',
-    'z-ai/glm-4.5-air:free',
-    'nvidia/nemotron-3-super-120b-a12b:free',
-    'nvidia/nemotron-nano-12b-v2-vl:free',
-    'nvidia/nemotron-nano-9b-v2:free',
-    'liquid/lfm-2.5-1.2b-instruct:free',
-    'arcee-ai/trinity-mini:free',
-];
+const OPENROUTER_MODELS = ['openrouter/free'];
 
 const INITIAL_MESSAGE = {
     role: 'assistant',
